@@ -2,11 +2,8 @@
 % description: Solves a linear program using the revised 
 %              simplex algorithm
 % input:       aN, matrix (A, in the canonical form)
-%              b,  array
+%              b,  transposed array
 %              cN, array (c, in the canonical form) 
-% output:      variables: which variables aren't 0.
-%              resp: their values, respectively.
-%              u: value pursued.
 
 function simplex (aN, b, cN)
     m = size(aN)(1);
@@ -20,7 +17,7 @@ function simplex (aN, b, cN)
     o = optimality(cB, B_inv, aN, cN);
     
     while o > 0
-        aK = aN(:, xN(o));
+        aK = aN(:, o);
         mc = minimalCoeficient(B_inv, b, aK);
 
         % Switching columns
@@ -37,9 +34,17 @@ function simplex (aN, b, cN)
         o = optimality(cB, B_inv, aN, cN);
     end
 
-    variables = xB 
-    resp = B_inv*b 
-    u = cB*B_inv*b
+    variables = xB;
+    resp = (B_inv*b).';
+    u = cB*B_inv*b;
+
+    fprintf('Maximum value is %f.\n', u);
+
+    for i = 1:m
+        fprintf('x_%d = %f\n', xB(i), resp(i));
+    end
+
+    fprintf('Other variables are 0.\n');
 
 endfunction
 
