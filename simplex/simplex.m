@@ -1,9 +1,9 @@
 % file:        simplex.m
-% description: Solves a linear program using the revised 
+% description: Solves a linear program using the revised
 %              simplex algorithm
 % input:       aN, matrix (A, in the canonical form)
 %              b,  transposed array
-%              cN, array (c, in the canonical form) 
+%              cN, array (c, in the canonical form)
 
 function simplex (aN, b, cN)
     m = size(aN)(1);
@@ -15,7 +15,7 @@ function simplex (aN, b, cN)
     cB = zeros(1, m);
 
     o = optimality(cB, B_inv, aN, cN);
-    
+
     while o > 0
         aK = aN(:, o);
         mc = minimalCoeficient(B_inv, b, aK);
@@ -41,14 +41,20 @@ function simplex (aN, b, cN)
     fprintf('Maximum value is %f.\n', u);
 
     for i = 1:m
-        fprintf('x_%d = %f\n', xB(i), resp(i));
+        if xB(i) <= n
+            fprintf('x_%d = %f\n', xB(i), resp(i));
+        end
     end
 
-    fprintf('Other variables are 0.\n');
+    for i = 1:m
+        if !ismember(i, xB)
+            fprintf('x_%d = 0\n', i);
+        end
+    end
 
 endfunction
 
-% Solves the optimality criteria. The returned index will be 
+% Solves the optimality criteria. The returned index will be
 % matched in the matrix that holds the non-basic variables.
 % If it's -1, the linear program is solved.
 function o = optimality(cB, B_inv, aN, cN)
@@ -58,18 +64,18 @@ function o = optimality(cB, B_inv, aN, cN)
         o = -1;
     else
         o = index;
-    end 
+    end
 endfunction
 
-% Solves the minimal coeficient criteira. The returned 
-% index will be matched in the matrix that holds the basic 
+% Solves the minimal coeficient criteira. The returned
+% index will be matched in the matrix that holds the basic
 % variables.
 function mc = minimalCoeficient(B_inv, b, aK)
     criteria = (B_inv*b)./(B_inv*aK);
     m = min(criteria(criteria > 0));
     if m == zeros(1, 0)
         mc = -1;
-    else 
-        mc = find(criteria == m);   
+    else
+        mc = find(criteria == m);
     end
 endfunction
